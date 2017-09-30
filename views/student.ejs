@@ -1,0 +1,23 @@
+<!-- a webpage to display all options available to a student after he logs in -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Student</title>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<br><br><br>
+     <center>
+     	<h1>Welcome <%= first_name %> <%= last_name %></h1>
+     	<a href="http://localhost:5000/student/get_my_leaves" style="text-decoration: none">See all previous Leaves </a><br>
+     	<a href="http://localhost:5000/student/apply_for_a_leave" style="text-decoration: none">Apply for a Leave </a><br>
+        <a href="http://localhost:5000/logout" style="text-decoration: none">Logout</a>
+     </center>
+</body>
+</html>

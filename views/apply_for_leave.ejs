@@ -1,0 +1,191 @@
+<!-- a web page to apply for a leave -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Apply for Leave</title>
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style>
+      #overlay_for_response, #overlay_for_waiting, #overlay_error
+      {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        display: none;
+        background-color: rgba(0,0,0,0.8);
+        cursor: pointer;
+        z-index: 40
+      }
+      #text_for_response, #text_for_waiting, #text_error
+      {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        color: black;
+        background-color: white;
+        padding: 2% 4%;
+
+        text-align: center;
+        font-size: 15px
+      }
+</style>
+<script>
+function save_changes()
+{
+  document.getElementById('overlay_for_waiting').style.display='block';
+  var data={};
+  data.start_date = document.getElementById('start_date').value;
+  data.end_date = document.getElementById('end_date').value;
+  data.leave_type = document.getElementById('leave_type').value;
+  data.reason = document.getElementById('reason').value;
+  var xhttp;
+  if(window.XMLHttpRequest)
+  {
+    xhttp = new XMLHttpRequest();
+  }
+  else
+  {
+    xhttp = new ActiveXObject('Microsoft.XMLHTTP');
+  }
+  xhttp.open('post','http://localhost:5000/send_leave_request', true);
+  xhttp.setRequestHeader('content-type','application/json');
+  xhttp.send(JSON.stringify(data));
+  console.log(JSON.stringify(data));
+  xhttp.onreadystatechange = function()
+  {
+    if(this.readyState==4)
+    {
+      console.log(this.responseText);
+      var y = JSON.parse(this.responseText);
+      if(y.success == true)
+      {
+        $('#overlay_for_waiting').click();
+        document.getElementById('overlay_for_response').style.display='block';
+        setTimeout(function(){document.location.href='http://localhost:5000/'+y.role;},200);
+      }
+      if(y.success == false)
+      {
+        $('#overlay_for_waiting').click();
+        setTimeout(function(){document.getElementById('overlay_for_response').style.display="block";},200);
+      }
+    }
+  }
+  return false;
+}
+</script>
+<body>
+<div class="container" style="width: 60%;margin-top: 0px">
+<div>
+<br><br><br><br><br>
+    <p style="text-align:center;margin-top:5px">Apply for a Leave</p><br>
+  
+ <form action="#" onsubmit="return save_changes()">
+ <div class="panel-group" id="accordion">
+    <div class="panel panel-default" style="border-radius:0">
+      <div id="personal_info" class="panel-collapse collapse in">
+        <div class="panel-body">
+           
+        <div class="row">   
+            <div class=" col-sm-1"></div> 
+            <div class=" col-sm-5 ">
+              <div class="form-group has-feedback">
+                <label for="start_date" class="control-label" style="color:#666666">* Start Date :</label><br>
+                <input class="form-control" id="start_date" type="date" style="border-radius:0"  required="required">
+              </div>
+            </div>
+            <div class="col-sm-5 ">
+              <div class="form-group has-feedback">
+                <label for="end_date" class="control-label" style="color:#666666">* End Date :</label><br>
+                <input class="form-control" id="end_date" type="date" style="border-radius:0"  required="required">   
+              </div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div> 
+
+        <div class="row">
+            <div class="col-sm-1 col-xs-0"></div>
+            <div class="col-sm-10 col-xs-12">
+            <div class="form-group has-feedback">
+               <label for="reason" class="control-label" style="color:#666666">* Reason :</label><br>
+               <textarea rows="5"  id="reason" name="reason" class="form-control" style="border-radius: 0;" required="required" placeholder="Reason for applying the leave"></textarea>
+            </div>
+            </div>
+             <div class="col-sm-1 col-xs-0"></div>
+        </div>
+
+
+
+ 
+
+        <div class="row">   
+            <div class=" col-sm-1"></div>
+            <div class="col-sm-10 ">
+            <div class="form-group has-feedback">
+            <label for="leave_type" class="control-label" style="color:#666666">* Type of Leave:</label><br>
+            <select class="form-control" id="leave_type" required style="border-radius: 0;" title="Type of Leave">
+                <option value="" disabled="disabled" selected="selected" id="gen">Choose One</option>
+                <option value="Sick Leave" id="sick_leave">Sick Leave</option>
+                <option value="Study Leave" id="study_leave">Study Leave</option>
+            </select>
+
+            <span class="glyphicon glyphicon-triangle-bottom form-control-feedback"></span>
+            </div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div> 
+         
+        </div>
+      </div>
+    </div>
+ </div>
+  <input type="submit" class="btn btn-primary" value="Apply for Leave" style="float:right;border-radius:0;">
+</div>
+
+</form>
+
+</div>
+<div id="overlay_for_waiting" onclick="off_for_waiting()">
+  <div id="text_for_waiting"><i class='fa fa-spinner fa-pulse fa-2x fa-fw'></i>&nbsp;&nbsp;&nbsp;<h3 style="display:inline;">Processing</h3>
+  </div>
+</div>
+
+<div id="overlay_for_response" onclick="off_for_response()">
+  <div id="text_for_response" style="text-align:center">Applied for leave successfully<br> Redirecting ...
+  </div>
+</div>
+
+<div id="overlay_error" onclick="off_error()">
+  <div id="text_error">Some error occurred.<br> Unable to apply for leave. <br> Please try again later !
+  </div>
+</div>
+
+<script>
+    function off_for_waiting()
+  {
+    document.getElementById("overlay_for_waiting").style.display = "none"; 
+  }
+    function off_for_response()
+  {
+    document.getElementById("overlay_for_password").style.display = "none"; 
+  }
+    function off_error()
+  {
+    document.getElementById("overlay_error").style.display = "none"; 
+  }
+
+</script>
+<br><br><br><br><br>
+
+
+</div>
+</body>
+</html>

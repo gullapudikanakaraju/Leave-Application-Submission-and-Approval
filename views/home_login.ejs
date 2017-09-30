@@ -1,0 +1,174 @@
+<!-- a webpage to display the login page -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Change Password</title>
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style>
+  .container
+  {
+    width: 28%;
+  }
+     #overlay_for_waiting, #overlay_for_login_response
+      {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        display: none;
+        background-color: rgba(0,0,0,0.8);
+        cursor: pointer;
+        z-index: 40
+      }
+      #text_for_waiting, #text_for_login_response
+      {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        color: black;
+        background-color: white;
+        padding: 2% 4%;
+
+        text-align: center;
+        font-size: 15px
+      }
+</style>
+<script type="text/javascript">
+  
+      function validate()
+      {
+        var data={};
+        data.email = document.getElementById('email_login').value;
+        data.password = document.getElementById('password_login').value;
+        var Role= document.getElementsByName('Role');
+        if(Role[0].checked)
+        {
+          data.role= 'student';
+        }
+        if(Role[1].checked)
+        {
+          data.role= 'teacher';
+        }
+        setTimeout(function(){document.getElementById('overlay_for_waiting').style.display="block";},200);
+          // document.getElementById('overlay_for_waiting').style.display="block";
+          var xhttp;
+          if(window.XMLHttpRequest)
+          {
+            xhttp = new XMLHttpRequest();
+          }
+          else
+          {
+            xhttp = new ActiveXObject('Microsoft.XMLHTTP');
+          }
+          xhttp.open('post','http://localhost:5000/login', true);
+          xhttp.setRequestHeader('content-type','application/json');
+          xhttp.send(JSON.stringify(data));
+          console.log(JSON.stringify(data));
+
+          xhttp.onreadystatechange = function()
+          {
+            if(this.readyState==4)
+            {
+              console.log(this.responseText);
+              var y = JSON.parse(this.responseText);
+              if(y.success == true)
+              {
+                setTimeout(function(){document.location.href='http://localhost:5000/'+y.role;},800);
+              }
+              if(y.success == false)
+              {
+                document.getElementById("overlay_for_waiting").style.display = "none"; 
+                setTimeout(function(){document.getElementById('overlay_for_login_response').style.display="block";},200);
+              }
+            }
+          }
+        return false;
+      }
+
+</script>
+<body>
+
+<div>
+  <p style="text-align:center;margin-top:150px">log in to start your session</p>
+  <div class="container">
+  <form action="#" onsubmit="return validate()">
+  <div class="panel-group">
+      <div class="panel panel-default" style="border-radius:0">   
+        <div class="panel-body">   
+          <br>
+          <div style="text-align:center;">
+             <label><input  type="radio" name="Role" value="student" checked/> &nbsp;Student</label> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+           
+             <label><input type="radio" name="Role" value="teacher"/>&nbsp; Teacher </label>
+          </div> 
+          <br> 
+
+          <div class="row">
+              <div class="col-sm-1" col-xs-0></div>
+              <div class="col-sm-10 col-xs-12">
+              <div class="form-group has-feedback">
+                <label for="email_login" class="control-label" style="color:#666666"> Email:</label><br>
+                <input type="email" id="email_login" name="email_login" class="form-control" style="border-radius: 0;" title="Email Address" required="required" autocomplete="off">
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+              </div>
+              </div>
+              <div class="col-sm-1 col-xs-0"></div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-1" col-xs-0></div>
+            <div class="col-sm-10 col-xs-12">
+              <div class="form-group has-feedback">
+                <label for="password_login" class="control-label" style="color:#666666">Password :</label><br>
+                <input type="password" id="password_login" name="password_login" class="form-control" style="border-radius: 0;" required="required" pattern="[a-zA-Z0-9!@#$%^&*]{7,15}$" title="Allowed characters are A-Z a-z 0-9 !@#$%^&* and Min-7, Max-15 characters.">
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="col-sm-1 col-xs-0"></div>
+          </div>
+          <br>
+
+          <input type="button" value="Register" class="btn btn-primary" style="border-radius:0;margin-left: 33px" onclick="kaju()"> 
+          <button type="submit" class="btn btn-primary" style="border-radius:0;margin-right: 33px;float:right;">&nbsp;Log In&nbsp;</button>
+           <br><br><br>   
+        </div>
+      </div>
+  </div>
+</form>
+</div>
+</div>
+<div id="overlay_for_waiting" onclick="off_for_waiting()">
+  <div id="text_for_waiting"><i class='fa fa-spinner fa-pulse fa-2x fa-fw'></i>&nbsp;&nbsp;&nbsp;<h3 style="display:inline;">Processing</h3>
+  </div>
+</div>
+
+<div id="overlay_for_login_response" onclick="off_for_login_response()">
+  <div id="text_for_login_response" style="text-align:center">Invalid email or password !
+  </div>
+</div>
+</body>
+<script>
+	function kaju(){
+		document.location.href='http://localhost:5000/register_user';
+	}
+
+  function off_for_waiting()
+  {
+    document.getElementById("overlay_for_waiting").style.display = "none"; 
+  }
+
+  function off_for_login_response()
+  {
+    document.getElementById("overlay_for_login_response").style.display = "none"; 
+  }
+</script>
+</html>
