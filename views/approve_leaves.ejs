@@ -87,7 +87,7 @@
       {
         xhttp= new ActiveXObject('Microsoft.XMLHTTP');
       }
-      xhttp.open('post','http://localhost:5000/update_approval_status', true);
+      xhttp.open('put','http://localhost:5000/update_approval_status', true);
       console.log(leave_identity);
       xhttp.setRequestHeader('content-type','application/json');
       xhttp.send(JSON.stringify({leave_id: leave_identity}));

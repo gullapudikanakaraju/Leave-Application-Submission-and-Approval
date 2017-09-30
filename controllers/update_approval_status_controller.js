@@ -1,5 +1,5 @@
 module.exports = function(app){
-    app.post('/update_approval_status', function(request, response){
+    app.put('/update_approval_status', function(request, response){
     var update_approval_status_model = require('../models/update_approval_status_model.js');
     console.log('in update_approval_status_controller.js');
     var cookies = request.cookies;
